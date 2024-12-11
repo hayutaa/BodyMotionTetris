@@ -1,68 +1,82 @@
 const video = document.getElementById('videoPreview');
-const canvas = document.getElementById('keypointsCanvas');
-const ctx = canvas.getContext('2d');
-let net;
+const cameraSelect = document.getElementById('cameraSelect');
+const testCameraButton = document.getElementById('testCameraButton');
 
-// Zurück-Navigation
-function goBack() {
-  window.location.href = 'index.html';
+// Funktion: Kamerastream starten
+async function startStream(deviceId) {
+  // Vorherigen Stream stoppen
+  if (video.srcObject) {
+    video.srcObject.getTracks().forEach(track => track.stop());
+  }
+
+  try {
+    // Neuen Stream starten
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { deviceId: deviceId ? { exact: deviceId } : undefined }
+    });
+    video.srcObject = stream;
+    video.style.display = 'block';
+  } catch (err) {
+    console.error('Fehler beim Zugriff auf die Kamera:', err);
+    alert('Die ausgewählte Kamera konnte nicht gestartet werden.');
+  }
 }
 
-// Kamera einrichten
-async function setupCamera() {
-  const stream = await navigator.mediaDevices.getUserMedia({
-    video: true,
-    audio: false,
-  });
-  video.srcObject = stream;
-  return new Promise((resolve) => {
-    video.onloadedmetadata = () => {
-      resolve(video);
-    };
-  });
-}
+// Funktion: Kameras auflisten
+async function listCameras() {
+  try {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const videoDevices = devices.filter(device => device.kind === 'videoinput');
 
-// PoseNet initialisieren
-async function loadPoseNet() {
-  net = await posenet.load();
-  console.log("PoseNet Modell geladen!");
-  detectPose();
-}
+    cameraSelect.innerHTML = ''; // Kameraauswahl leeren
 
-// Pose-Erkennung
-async function detectPose() {
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
+    videoDevices.forEach((device, index) => {
+      const option = document.createElement('option');
+      option.value = device.deviceId;
+      option.text = device.label || `Kamera ${index + 1}`;
+      cameraSelect.appendChild(option);
+    });
 
-  const pose = await net.estimateSinglePose(video, {
-    flipHorizontal: false,
-  });
-
-  // Zeichne Keypoints auf dem Canvas
-  drawKeypoints(pose.keypoints);
-
-  // Zeige Koordinaten in der Konsole
-  console.log("Koordinaten der Person:", pose.keypoints);
-
-  requestAnimationFrame(detectPose);
-}
-
-// Keypoints zeichnen
-function drawKeypoints(keypoints) {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  keypoints.forEach((keypoint) => {
-    if (keypoint.score > 0.5) { // Nur zuverlässige Keypoints anzeigen
-      const { x, y } = keypoint.position;
-      ctx.beginPath();
-      ctx.arc(x, y, 5, 0, 2 * Math.PI);
-      ctx.fillStyle = 'red';
-      ctx.fill();
+    // Standardmäßig die erste Kamera starten
+    if (videoDevices.length > 0) {
+      startStream(videoDevices[0].deviceId);
     }
-  });
+  } catch (err) {
+    console.error('Fehler beim Abrufen der Kameraliste:', err);
+    alert('Es konnten keine Kameras gefunden werden.');
+  }
 }
 
-// Kamera starten und PoseNet laden
-document.getElementById('testCameraButton').addEventListener('click', async () => {
-  await setupCamera();
-  await loadPoseNet();
+// Event: Kamera wechseln
+cameraSelect.onchange = () => startStream(cameraSelect.value);
+
+// Event: Kamera testen
+testCameraButton.addEventListener('click', () => {
+  if (!cameraSelect.value) {
+    alert('Bitte wähle zuerst eine Kamera aus.');
+  } else {
+    startStream(cameraSelect.value);
+  }
 });
+
+// Kameras initialisieren
+listCameras();
+
+// Funktion: Spiel starten
+function startGame() {
+  if (!video.srcObject) {
+    alert('Bitte wähle eine Kamera aus und teste sie zuerst!');
+    return;
+  }
+  // Weiterleitung oder Integration des Streams ins Spiel
+  window.location.href = 'game.html';
+}
+
+const toggleMirrorButton = document.getElementById('toggleMirror');
+let isMirrored = true;
+
+toggleMirrorButton.addEventListener('click', () => {
+  isMirrored = !isMirrored;
+  video.style.transform = isMirrored ? 'scaleX(-1)' : 'scaleX(1)';
+});
+
