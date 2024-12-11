@@ -1,0 +1,114 @@
+.navbar {
+  display: flex;
+  justify-content: center;
+   padding: 10px;
+}
+
+.navbar button {
+  background-color: #d865a4;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin: 50px 30px;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.navbar button:hover {
+  background-color: #5243d6;
+} 
+.neon-text {
+  font-family: 'Arial', sans-serif;
+  text-align: center; 
+  margin: 0;
+}
+
+.neon-text .line:first-child {
+  font-size: 4rem; 
+  color: #ce91bb;
+  text-shadow: 
+    0 0 5px #df60aa, 
+    0 0 10px hsl(335, 67%, 60%), 
+    0 0 20px hsl(335, 67%, 60%), 
+    0 0 40px hsl(335, 67%, 60%), 
+    0 0 80px rgb(98, 117, 180);
+    animation: neon-flicker 1.5s infinite alternate;
+}
+
+.neon-text .line:last-child {
+  font-size: 5rem; 
+  color: #7fc6e0;
+  text-shadow: 
+    0 0 5px #2dcaff, 
+    0 0 10px #2dcaff, 
+    0 0 20px #2dcaff, 
+    0 0 40px #2dcaff, 
+    0 0 80px #2dcaff;
+    animation: neon-flicker 1.5s infinite alternate;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  justify-content: center; 
+  justify-content: stretch;
+  text-align: center;
+  color: #ffffff;
+  margin-top: -56px;
+  max-width: 600px;
+  padding: 20px;
+  padding: 10%;
+  border-radius: 10px; 
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 100vh;
+  background: url('assets/mm.gif') no-repeat center center fixed;
+  background-size: cover; 
+  color: #000000; 
+  background-color: #000000;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+}
+
+@keyframes neon-flicker {
+  0% {
+    text-shadow: 
+      0 0 5px hsl(335, 67%, 60%), 
+      0 0 10px hsl(335, 67%, 60%),
+      0 0 20px hsl(335, 67%, 60%), 
+      0 0 40px hsl(335, 67%, 60%), 
+      0 0 80px hsl(335, 67%, 60%),
+  }
+  50% {
+    text-shadow: 
+      0 0 2px hsl(335, 67%, 60%), 
+      0 0 4px hsl(335, 67%, 60%),
+      0 0 8px hsl(335, 67%, 60%), 
+      0 0 16px hsl(335, 67%, 60%), 
+      0 0 32px hsl(335, 67%, 60%),
+  }
+  100% {
+    text-shadow: 
+      0 0 5px hsl(335, 67%, 60%), 
+      0 0 15px hsl(335, 67%, 60%), 
+      0 0 30px hsl(335, 67%, 60%), 
+      0 0 60px hsl(335, 67%, 60%),
+      0 0 120px hsl(335, 67%, 60%);
+  }
+}
+
+
+ /* line-height: Zeilenabstand
+     object-fit: cover; Füllt den verfügbaren Raum aus 
+     transform: scaleX(-1); Spiegelung aufheben 
+    border-radius: 10px;  Abgerundete Ecken
+*/
