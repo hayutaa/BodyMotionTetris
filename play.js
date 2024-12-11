@@ -10,7 +10,6 @@ async function startStream(deviceId) {
   }
 
   try {
-    // Neuen Stream starten
     const stream = await navigator.mediaDevices.getUserMedia({
       video: { deviceId: deviceId ? { exact: deviceId } : undefined }
     });
