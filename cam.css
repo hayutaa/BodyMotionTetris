@@ -1,8 +1,15 @@
+header {
+  width: 100%;
+  text-align: center;
+  margin-top: 50px; /* Abstand vom oberen Rand */
+}
+
 .neon-text {
   font-family: 'Arial', sans-serif;
   text-align: center; 
   margin: 0;
 }
+
 
 .neon-text .line:first-child {
   font-size: 4rem; 
@@ -27,8 +34,9 @@
     0 0 80px #2dcaff;
     animation: neon-flicker 1.5s infinite alternate;
 }
+
 #cameraSelect {
-    margin: 10px 0;
+    margin: 10px 0; /* für Abstand von oben und unten*/
     padding: 10px;
     border: 2px solid #7fc6e0;
     border-radius: 5px;
@@ -48,6 +56,7 @@
     font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-bottom: 20px;
   }
   
   #testCameraButton:hover {
@@ -55,15 +64,32 @@
     transform: scale(1.05);
   }
   
-  #videoPreview {
-    width: 100%;
-    max-width: 500px; 
-    height: 750px; 
-    border: 2px solid #ce91bb;
+  #videoPreviewContainer {
+    position: relative;
+    width: 700px; /* Breite des Containers: 90% der Seite */
+    max-width: 1000px; /* Maximale Breite */
+    height: 600px; /* Festgelegte Höhe */
+    margin: auto;
+    border: 5px solid #ce91bb; /* Optionaler Rahmen für die Kamera */
     border-radius: 10px;
-    transform: scaleX(-1); 
-    object-fit: cover; 
+    overflow: hidden; /* Inhalte bleiben im Container */
+    transform: scaleX(-1);
   }
+  
+  #videoPreview, #poseCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%; /* Füllt den Container */
+    height: 100%; /* Füllt die Höhe des Containers */
+    object-fit: cover; /* Verhindert Verzerrungen */
+  }
+  
+  
+  #poseCanvas {
+    pointer-events: none; /* Klicks gehen durch das Canvas */
+  }
+  
   
   .nav-buttons button {
     padding: 10px 20px;

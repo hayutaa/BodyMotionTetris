@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Body-Motion Tetris - Kameraauswahl</title>
+  <link rel="stylesheet" href="cam.css">
+</head>
+<body>
+  <header>
+    <h1 class="neon-text">
+      <span class="line">BODY MOTION <br></span>
+      <span class="line">TETRIS</span>
+    </h1>
+  </header>
+
+  <div class="container">
+    <p>Wähle eine Kamera aus und teste sie, bevor du spielst: </p>
+    <select id="cameraSelect"></select>
+    <button id="testCameraButton">Kamera testen</button>
+
+    <div id="videoPreviewContainer">
+      <video id="videoPreview" autoplay muted playsinline></video>
+      <canvas id="poseCanvas"></canvas>
+    </div>
+    
+
+    <button class="back-button" onclick="goBack()">back</button>
+    <script>
+      function goBack() {
+        window.location.href = 'index.html';
+      }
+    </script>
+  </div>
+
+  <!-- TensorFlow.js und BlazePose -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose"></script>
+  <script src="cam.js"></script> <!-- JavaScript-Datei -->
+</body>
+</html>
