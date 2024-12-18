@@ -1,0 +1,40 @@
+.container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+}
+
+.half {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+#videoPreviewContainer {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  border: 3px solid #ce91bb;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+#gameContainer {
+  width: 100%;
+  max-width: 400px;
+  height: 600px;
+  border: 3px solid #7fc6e0;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  font-size: 1.2rem;
+  text-align: center;
+}

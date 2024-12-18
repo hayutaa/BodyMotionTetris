@@ -3,8 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Body-Motion Tetris - Kameraauswahl</title>
+    <title>Body-Motion Tetris</title>
     <link rel="stylesheet" href="cam.css" />
+    <link rel="stylesheet" href="play.css" />
   </head>
   <body>
     <header>
@@ -15,30 +16,20 @@
     </header>
 
     <div class="container">
-      <p>Wähle eine Kamera aus und teste sie, bevor du spielst</p>
-      <select id="cameraSelect"></select>
-      <button id="testCameraButton">Kamera testen</button>
-
-      <div id="videoPreviewContainer">
-        <video id="videoPreview" autoplay muted playsinline></video>
-        <canvas id="poseCanvas"></canvas>
+      <div class="half left">
+        <div id="videoPreviewContainer">
+          <video id="videoPreview" autoplay muted playsinline></video>
+          <canvas id="poseCanvas"></canvas>
+        </div>
+        <select id="cameraSelect"></select>
       </div>
 
-      <button class="back-button" onclick="goBack()">back</button>
-      <script>
-        function goBack() {
-          window.location.href = "index.html";
-        }
-      </script>
-
-      <nav class="navbar">
-        <button onclick="navigateTo('play.html')">Play</button>
-      </nav>
-      <script>
-        function navigateTo(page) {
-          window.location.href = page;
-        }
-      </script>
+      <div class="half right">
+        <h2>Tetris-Spiel</h2>
+        <div id="gameContainer">
+          <p>Spiel kommt hier rein...</p>
+        </div>
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core"></script>
@@ -46,5 +37,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose"></script>
     <script src="cam.js"></script>
+    <script src="play.js"></script>
   </body>
 </html>

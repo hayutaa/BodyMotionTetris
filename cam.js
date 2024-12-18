@@ -1,15 +1,15 @@
-const video = document.getElementById('videoPreview');
-const cameraSelect = document.getElementById('cameraSelect');
-const testCameraButton = document.getElementById('testCameraButton');
-const canvas = document.getElementById('poseCanvas');
-const ctx = canvas.getContext('2d');
+const video = document.getElementById("videoPreview");
+const cameraSelect = document.getElementById("cameraSelect");
+const testCameraButton = document.getElementById("testCameraButton");
+const canvas = document.getElementById("poseCanvas");
+const ctx = canvas.getContext("2d");
 
 let detector;
 
-// Starte Kamera-Stream
+// Kamera-Stream starten
 async function startStream(deviceId) {
   if (video.srcObject) {
-    video.srcObject.getTracks().forEach(track => track.stop());
+    video.srcObject.getTracks().forEach((track) => track.stop());
   }
 
   try {
@@ -25,9 +25,44 @@ async function startStream(deviceId) {
       canvas.height = video.videoHeight;
       loadBlazePose();
     };
+
+    console.log(`Kamera gestartet mit ID: ${deviceId || "Standardkamera"}`);
   } catch (err) {
-    console.error('Fehler beim Zugriff auf die Kamera:', err);
-    alert('Die Kamera konnte nicht gestartet werden.');
+    console.error("Fehler beim Zugriff auf die Kamera:", err);
+    alert("Die Kamera konnte nicht gestartet werden.");
+    listCameras();
+  }
+}
+
+async function listCameras() {
+  try {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const videoDevices = devices.filter(
+      (device) => device.kind === "videoinput"
+    );
+
+    cameraSelect.innerHTML = "";
+
+    videoDevices.forEach((device, index) => {
+      const option = document.createElement("option");
+      option.value = device.deviceId;
+      option.text = device.label || `Kamera ${index + 1}`;
+      cameraSelect.appendChild(option);
+    });
+
+    // Wähle die gespeicherte Kamera, falls verfügbar
+    const savedCameraId = localStorage.getItem("selectedCameraId");
+    if (
+      savedCameraId &&
+      videoDevices.some((device) => device.deviceId === savedCameraId)
+    ) {
+      cameraSelect.value = savedCameraId;
+      startStream(savedCameraId);
+    } else if (videoDevices.length > 0) {
+      startStream(videoDevices[0].deviceId);
+    }
+  } catch (err) {
+    console.error("Fehler beim Abrufen der Kameraliste:", err);
   }
 }
 
@@ -35,9 +70,9 @@ async function startStream(deviceId) {
 async function loadBlazePose() {
   const model = poseDetection.SupportedModels.BlazePose;
   const detectorConfig = {
-    runtime: 'mediapipe',
-    solutionPath: 'https://cdn.jsdelivr.net/npm/@mediapipe/pose',
-    modelType: 'full',
+    runtime: "mediapipe",
+    solutionPath: "https://cdn.jsdelivr.net/npm/@mediapipe/pose",
+    modelType: "full",
   };
 
   detector = await poseDetection.createDetector(model, detectorConfig);
@@ -52,65 +87,32 @@ async function detectPose() {
   requestAnimationFrame(detectPose);
 }
 
-// Nur Körperpunkte zeichnen
+// Keypoints zeichnen
 function drawPose(poses) {
-  ctx.clearRect(0, 0, canvas.width, canvas.height); // Canvas leeren
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   if (poses.length > 0) {
     const BODY_KEYPOINTS = [11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28];
 
-    // Skalierungsfaktoren berechnen
-    const scaleX = canvas.width / video.videoWidth;
-    const scaleY = canvas.height / video.videoHeight;
-
     poses[0].keypoints.forEach((point, index) => {
       if (BODY_KEYPOINTS.includes(index) && point.score > 0.5) {
-        // Keypoint-Koordinaten an die Canvas-Größe anpassen
-        const x = point.x * scaleX;
-        const y = point.y * scaleY;
-
         ctx.beginPath();
-        ctx.arc(x, y, 5, 0, 2 * Math.PI);
-        ctx.fillStyle = 'red';
+        ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI);
+        ctx.fillStyle = "red";
         ctx.fill();
       }
     });
   }
 }
 
+// Kamera auswählen (Dropdown-Ereignis)
+cameraSelect.onchange = () => {
+  const selectedCameraId = cameraSelect.value;
+  localStorage.setItem("selectedCameraId", selectedCameraId); // Speichere die neue ID
+  startStream(selectedCameraId);
+};
 
-// Kameras auflisten
-async function listCameras() {
-  try {
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    const videoDevices = devices.filter(device => device.kind === 'videoinput');
-
-    cameraSelect.innerHTML = '';
-
-    videoDevices.forEach((device, index) => {
-      const option = document.createElement('option');
-      option.value = device.deviceId;
-      option.text = device.label || `Kamera ${index + 1}`;
-      cameraSelect.appendChild(option);
-    });
-
-    if (videoDevices.length > 0) {
-      startStream(videoDevices[0].deviceId);
-    }
-  } catch (err) {
-    console.error('Fehler beim Abrufen der Kameraliste:', err);
-  }
-}
-
-cameraSelect.onchange = () => startStream(cameraSelect.value);
-
-testCameraButton.addEventListener('click', () => {
-  if (!cameraSelect.value) {
-    alert('Bitte wähle zuerst eine Kamera aus.');
-  } else {
-    startStream(cameraSelect.value);
-  }
-});
-
-// Initialisiere Kameraliste
-listCameras();
+// Initialisierung
+window.onload = () => {
+  listCameras(); // Kameras auflisten und Starten
+};
