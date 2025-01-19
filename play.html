@@ -25,9 +25,13 @@
       </div>
 
       <div class="half right">
-        <h2>Tetris-Spiel</h2>
-        <div id="gameContainer">
-          <p>Spiel kommt hier rein...</p>
+        <div id="game-container">
+          <canvas width="320" height="640" id="gameCanvas"></canvas>
+          <div id="scoreboard">
+            <h1>Score</h1>
+            <p id="score">0</p>
+          </div>
+          <button id="pause-button">Pause</button>
         </div>
       </div>
     </div>
@@ -36,7 +40,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose"></script>
-    <script src="cam.js"></script>
     <script src="play.js"></script>
+    <script src="cam.js"></script>
   </body>
 </html>

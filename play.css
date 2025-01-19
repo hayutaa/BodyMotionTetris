@@ -38,3 +38,41 @@
   font-size: 1.2rem;
   text-align: center;
 }
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+#game-container {
+  display: flex;
+  align-items: center;
+}
+
+canvas {
+  border: 1px solid white;
+}
+
+#scoreboard {
+  margin-left: 20px;
+  text-align: center;
+}
+
+#scoreboard h1 {
+  font-size: 24px;
+}
+
+#scoreboard p {
+  font-size: 32px;
+  font-weight: bold;
+}
