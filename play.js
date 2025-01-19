@@ -189,25 +189,63 @@ let rAF = null;
 let gameOver = false;
 let isPaused = false; // Pausenstatus
 
-document.getElementById("pause-button").addEventListener("click", togglePause);
-
-document.addEventListener("keydown", (e) => {
-  // Wenn die Taste "P" (Keycode 80) gedrückt wird
-  if (e.key.toLowerCase() === "p") {
-    togglePause(); // Pausenfunktion aufrufen
-  }
+document.getElementById("pause-button").addEventListener("click", (e) => {
+  e.preventDefault(); // Verhindert Standardaktionen
+  e.target.blur(); // Entfernt den Fokus vom Button
+  togglePause(); // Pausenstatus umschalten
 });
 
 function togglePause() {
   isPaused = !isPaused; // Pausenstatus umschalten
-  const button = document.getElementById("pause-button");
-  button.textContent = isPaused ? "Resume" : "Pause"; // Button-Text aktualisieren
 
-  if (!isPaused) {
-    // Spiel-Loop fortsetzen
-    rAF = requestAnimationFrame(loop);
+  // Button-Text aktualisieren
+  const button = document.getElementById("pause-button");
+  button.textContent = isPaused ? "Resume" : "Pause";
+
+  if (isPaused) {
+    cancelAnimationFrame(rAF); // Stoppe den Animations-Loop
+  } else {
+    rAF = requestAnimationFrame(loop); // Spiel-Loop fortsetzen
   }
 }
+
+function restartGame() {
+  score = 0;
+  count = 0;
+  gameOver = false;
+  tetrominoSequence.length = 0; // Lösche die Tetromino-Sequenz
+  initializePlayfield(); // Spielfeld zurücksetzen
+  tetromino = getNextTetromino(); // Neues Tetromino generieren
+  document.getElementById("score").textContent = score; // Score zurücksetzen
+  rAF = requestAnimationFrame(loop); // Spiel-Loop neu starten
+}
+
+function initializePlayfield() {
+  for (let row = 0; row < 20; row++) {
+    playfield[row] = Array(10).fill(0); // Jede Reihe leeren
+  }
+}
+
+let keyPressed = false;
+
+document.addEventListener("keydown", (e) => {
+  if (e.key.toLowerCase() === "p" && !keyPressed) {
+    keyPressed = true; // Setze das Flag
+    togglePause(); // Pausenstatus umschalten
+  }
+});
+
+document.addEventListener("keyup", (e) => {
+  if (e.key.toLowerCase() === "p") {
+    keyPressed = false; // Zurücksetzen des Flags bei Loslassen der Taste
+  }
+});
+
+document.getElementById("restart-button").addEventListener("click", (e) => {
+  e.preventDefault(); // Verhindert Standardaktionen
+  e.target.blur(); // Entfernt den Fokus vom Button
+  restartGame(); // Neustart ausführen
+});
 
 function loop() {
   if (isPaused) {
@@ -300,5 +338,7 @@ document.addEventListener("keydown", function (e) {
     hardDrop();
   }
 });
+
+initializePlayfield();
 
 rAF = requestAnimationFrame(loop);
