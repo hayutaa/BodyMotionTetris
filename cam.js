@@ -92,7 +92,7 @@ function drawPose(poses) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   if (poses.length > 0) {
-    const BODY_KEYPOINTS = [11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28];
+    const BODY_KEYPOINTS = [3, 4, 11, 12, 15, 16];
 
     poses[0].keypoints.forEach((point, index) => {
       if (BODY_KEYPOINTS.includes(index) && point.score > 0.5) {
@@ -105,14 +105,101 @@ function drawPose(poses) {
   }
 }
 
-// Kamera auswählen (Dropdown-Ereignis)
+// Globale Variablen
+let lastLeftHandX = null;
+let lastRightHandX = null;
+let handsDownTime = 0; // Zeit, wie lange die Hände unten bleiben
+let lastRotationTime = 0; // Zeitstempel der letzten Rotation
+const HOLD_DURATION = 1000; // Dauer für Hard Drop (in Millisekunden)
+const SMOOTHING_THRESHOLD = 20; // Schwelle für Handbewegung in Pixeln
+const FRAME_TIME = 16; // Zeit pro Frame (ca. 60 FPS)
+const EAR_TILT_THRESHOLD = 15; // Schwelle für Kopfneigung in Pixeln
+const ROTATION_DELAY = 500; // Mindestzeit zwischen zwei Rotationen (in Millisekunden)
+
+async function detectPose() {
+  const poses = await detector.estimatePoses(video);
+  if (poses.length > 0) {
+    const keypoints = poses[0].keypoints;
+
+    const leftHand = keypoints[15]; // Linke Hand
+    const rightHand = keypoints[16]; // Rechte Hand
+    const leftEar = keypoints[3]; // Linkes Ohr
+    const rightEar = keypoints[4]; // Rechtes Ohr
+
+    handleHandMovement(leftHand, "left");
+
+    handleHandMovement(rightHand, "right");
+
+    handleHardDrop(leftHand, rightHand);
+
+    handleHeadTilt(leftEar, rightEar);
+  }
+
+  drawPose(poses);
+  requestAnimationFrame(detectPose);
+}
+
+// Block nach rechts/links
+function handleHandMovement(hand, direction) {
+  if (hand.score > 0.5) {
+    const lastHandX = direction === "left" ? lastLeftHandX : lastRightHandX;
+    if (
+      lastHandX === null ||
+      Math.abs(hand.x - lastHandX) > SMOOTHING_THRESHOLD
+    ) {
+      if (direction === "left") {
+        moveLeft();
+        lastLeftHandX = hand.x;
+      } else {
+        moveRight();
+        lastRightHandX = hand.x;
+      }
+    }
+  }
+}
+
+//Hard Drop
+function handleHardDrop(leftHand, rightHand) {
+  const bothHandsDown =
+    leftHand.score > 0.5 &&
+    rightHand.score > 0.5 &&
+    leftHand.y > (2 * canvas.height) / 3 &&
+    rightHand.y > (2 * canvas.height) / 3;
+
+  if (bothHandsDown) {
+    handsDownTime += FRAME_TIME;
+    if (handsDownTime >= HOLD_DURATION) {
+      hardDrop();
+      handsDownTime = 0;
+    }
+  } else {
+    handsDownTime = 0;
+  }
+}
+
+//Block drehen
+function handleHeadTilt(leftEar, rightEar) {
+  if (leftEar.score > 0.5 && rightEar.score > 0.5) {
+    const tilt = leftEar.y - rightEar.y;
+    const currentTime = Date.now();
+
+    if (
+      tilt > EAR_TILT_THRESHOLD &&
+      currentTime - lastRotationTime > ROTATION_DELAY
+    ) {
+      rotateTetromino();
+      lastRotationTime = currentTime;
+    }
+  }
+}
+
+// Kamera auswählen
 cameraSelect.onchange = () => {
   const selectedCameraId = cameraSelect.value;
   localStorage.setItem("selectedCameraId", selectedCameraId); // Speichere die neue ID
   startStream(selectedCameraId);
 };
 
-// Initialisierung
 window.onload = () => {
-  listCameras(); // Kameras auflisten und Starten
+  listCameras();
 };

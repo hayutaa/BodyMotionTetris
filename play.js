@@ -35,7 +35,6 @@ function isValidMove(matrix, cellRow, cellCol) {
   for (let row = 0; row < matrix.length; row++) {
     for (let col = 0; col < matrix[row].length; col++) {
       if (matrix[row][col]) {
-        // Prüfe, ob die Position außerhalb der Spielfeldgrenzen liegt
         if (
           cellCol + col < 0 ||
           cellCol + col >= playfield[0].length ||
@@ -50,14 +49,12 @@ function isValidMove(matrix, cellRow, cellCol) {
   return true;
 }
 
-// Globale Variablen
 let score = 0;
 
-// Aktualisiere den Score im HTML
 function updateScore(lines) {
   const lineScores = [0, 40, 100, 300, 1200]; // Punkte für 1, 2, 3 oder 4 gelöste Linien
   score += lineScores[lines];
-  document.getElementById("score").textContent = score; // Score im HTML aktualisieren
+  document.getElementById("score").textContent = score;
 }
 
 function placeTetromino() {
@@ -66,23 +63,19 @@ function placeTetromino() {
   for (let row = 0; row < tetromino.matrix.length; row++) {
     for (let col = 0; col < tetromino.matrix[row].length; col++) {
       if (tetromino.matrix[row][col]) {
-        // Wenn das Tetromino außerhalb des Spielfelds platziert wird, zeige Game Over
         if (tetromino.row + row < 0) {
           return showGameOver();
         }
 
-        // Setze das Tetromino auf das Spielfeld
         playfield[tetromino.row + row][tetromino.col + col] = tetromino.name;
       }
     }
   }
 
-  // Überprüfe, ob eine oder mehrere Reihen vollständig gefüllt sind
   for (let row = playfield.length - 1; row >= 0; ) {
     if (playfield[row].every((cell) => !!cell)) {
       linesCleared++;
 
-      // Verschiebe alle oberen Reihen nach unten
       for (let r = row; r >= 0; r--) {
         for (let c = 0; c < playfield[r].length; c++) {
           playfield[r][c] = playfield[r - 1] ? playfield[r - 1][c] : 0;
@@ -94,10 +87,9 @@ function placeTetromino() {
   }
 
   if (linesCleared > 0) {
-    updateScore(linesCleared); // Punkte für gelöschte Reihen vergeben
+    updateScore(linesCleared);
   }
 
-  // Hole das nächste Tetromino
   tetromino = getNextTetromino();
 }
 
@@ -174,38 +166,37 @@ const tetrominos = {
 };
 
 const colors = {
-  I: "#8FBC8F", // Pastellgrün
-  O: "#F4A460", // Pastellorange
-  T: "#DB7093", // Pastellrosa
-  S: "#DC143C", // Pastellrot
-  Z: "#Dda0dd", // Pastelllila
-  J: "#6495ed", // Pastellblau
-  L: "#F0E68C", // Pastellgelb
+  I: "#8FBC8F",
+  O: "#F4A460",
+  T: "#DB7093",
+  S: "#DC143C",
+  Z: "#Dda0dd",
+  J: "#6495ed",
+  L: "#F0E68C",
 };
 
 let count = 0;
 let tetromino = getNextTetromino();
 let rAF = null;
 let gameOver = false;
-let isPaused = false; // Pausenstatus
+let isPaused = false;
 
 document.getElementById("pause-button").addEventListener("click", (e) => {
-  e.preventDefault(); // Verhindert Standardaktionen
-  e.target.blur(); // Entfernt den Fokus vom Button
-  togglePause(); // Pausenstatus umschalten
+  e.preventDefault();
+  e.target.blur();
+  togglePause();
 });
 
 function togglePause() {
-  isPaused = !isPaused; // Pausenstatus umschalten
+  isPaused = !isPaused;
 
-  // Button-Text aktualisieren
   const button = document.getElementById("pause-button");
   button.textContent = isPaused ? "Resume" : "Pause";
 
   if (isPaused) {
-    cancelAnimationFrame(rAF); // Stoppe den Animations-Loop
+    cancelAnimationFrame(rAF);
   } else {
-    rAF = requestAnimationFrame(loop); // Spiel-Loop fortsetzen
+    rAF = requestAnimationFrame(loop);
   }
 }
 
@@ -213,16 +204,16 @@ function restartGame() {
   score = 0;
   count = 0;
   gameOver = false;
-  tetrominoSequence.length = 0; // Lösche die Tetromino-Sequenz
-  initializePlayfield(); // Spielfeld zurücksetzen
-  tetromino = getNextTetromino(); // Neues Tetromino generieren
-  document.getElementById("score").textContent = score; // Score zurücksetzen
-  rAF = requestAnimationFrame(loop); // Spiel-Loop neu starten
+  tetrominoSequence.length = 0;
+  initializePlayfield();
+  tetromino = getNextTetromino();
+  document.getElementById("score").textContent = score;
+  rAF = requestAnimationFrame(loop);
 }
 
 function initializePlayfield() {
   for (let row = 0; row < 20; row++) {
-    playfield[row] = Array(10).fill(0); // Jede Reihe leeren
+    playfield[row] = Array(10).fill(0);
   }
 }
 
@@ -230,26 +221,26 @@ let keyPressed = false;
 
 document.addEventListener("keydown", (e) => {
   if (e.key.toLowerCase() === "p" && !keyPressed) {
-    keyPressed = true; // Setze das Flag
-    togglePause(); // Pausenstatus umschalten
+    keyPressed = true;
+    togglePause();
   }
 });
 
 document.addEventListener("keyup", (e) => {
   if (e.key.toLowerCase() === "p") {
-    keyPressed = false; // Zurücksetzen des Flags bei Loslassen der Taste
+    keyPressed = false;
   }
 });
 
 document.getElementById("restart-button").addEventListener("click", (e) => {
-  e.preventDefault(); // Verhindert Standardaktionen
-  e.target.blur(); // Entfernt den Fokus vom Button
+  e.preventDefault();
+  e.target.blur();
   restartGame(); // Neustart ausführen
 });
 
 function loop() {
   if (isPaused) {
-    cancelAnimationFrame(rAF); // Loop stoppen
+    cancelAnimationFrame(rAF);
     return;
   }
 
@@ -338,6 +329,32 @@ document.addEventListener("keydown", function (e) {
     hardDrop();
   }
 });
+
+function moveLeft() {
+  if (isValidMove(tetromino.matrix, tetromino.row, tetromino.col - 1)) {
+    tetromino.col--; // Bewege Tetromino nach links
+  }
+}
+
+function moveRight() {
+  if (isValidMove(tetromino.matrix, tetromino.row, tetromino.col + 1)) {
+    tetromino.col++; // Bewege Tetromino nach rechts
+  }
+}
+
+function rotateTetromino() {
+  const rotatedMatrix = rotate(tetromino.matrix);
+  if (isValidMove(rotatedMatrix, tetromino.row, tetromino.col)) {
+    tetromino.matrix = rotatedMatrix; // Rotiert das Tetromino
+  }
+}
+
+function hardDrop() {
+  while (isValidMove(tetromino.matrix, tetromino.row + 1, tetromino.col)) {
+    tetromino.row++; // Block schnell fallen lassen
+  }
+  placeTetromino(); // Block platzieren
+}
 
 initializePlayfield();
 

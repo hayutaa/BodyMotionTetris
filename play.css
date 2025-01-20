@@ -76,3 +76,18 @@ canvas {
   font-size: 32px;
   font-weight: bold;
 }
+
+.back-button {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background-color: #000000;
+  color: #f32fc9;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 8px 4px 8px rgba(255, 255, 255, 0.2);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
