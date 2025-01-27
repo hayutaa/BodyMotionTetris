@@ -41,3 +41,26 @@ body {
   font-family: Arial, sans-serif;
   overflow: hidden;
 }
+
+.instructions-container {
+  font-size: 0.9rem; /* Kleinere Schriftgröße */
+  line-height: 1.4; /* Weniger Zeilenabstand */
+}
+
+.instructions-container h2 {
+  font-size: 1.5rem; /* Kleinere Schriftgröße für die Überschrift */
+  margin-bottom: 10px;
+}
+
+.instructions-container ul,
+.instructions-container ol {
+  margin-left: 15px; /* Weniger Abstand für Listen */
+}
+
+.instructions-container li {
+  margin-bottom: 10px; /* Weniger Abstand zwischen Listenpunkten */
+}
+
+.instructions-container p {
+  font-size: 0.9rem; /* Kleinere Schriftgröße für Absätze */
+}
